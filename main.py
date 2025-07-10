@@ -33,8 +33,7 @@ def get_target_health(client: BaseClient, arn: str, target: str) -> str:
     return 'unknown'
 
 
-def wait_for_target_health(client: BaseClient, arn: str, target: str, health: str, tries: int = 5,
-                           delay: int = 5) -> bool:
+def wait_for_target_health(client: BaseClient, arn: str, target: str, health: str, tries: int, delay: int) -> bool:
     for i in range(tries):
         current_health = get_target_health(client, arn, target)
         if current_health == health:
@@ -55,18 +54,22 @@ parser.add_argument('arn', type=str, help='ARN of the target group to check heal
 parser.add_argument('target', type=str, help='ID of the target instance to check health for')
 parser.add_argument('--wait-for-healthy', action='store_true', help='Wait for status to be healthy before exiting')
 parser.add_argument('--wait-for-unhealthy', action='store_true', help='Wait for status to be unhealthy before exiting')
+parser.add_argument('--tries', type=int, default=60, help='Number of tries to check health before giving up')
+parser.add_argument('--delay', type=int, default=5, help='Delay in seconds between health checks')
 args = parser.parse_args()
 
 main_client = get_alb_client()
+tries = args.tries
+delay = args.delay
 
 if args.wait_for_healthy:
-    if wait_for_target_health(main_client, args.arn, args.target, 'healthy'):
+    if wait_for_target_health(main_client, args.arn, args.target, 'healthy', tries, delay):
         print("Success!")
     else:
         print("Failed to reach healthy state.")
         exit(1)
 elif args.wait_for_unhealthy:
-    if wait_for_target_health(main_client, args.arn, args.target, 'unhealthy'):
+    if wait_for_target_health(main_client, args.arn, args.target, 'unhealthy', tries, delay):
         print("Success!")
     else:
         print("Failed to reach unhealthy state.")
