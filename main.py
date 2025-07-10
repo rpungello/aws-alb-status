@@ -59,17 +59,15 @@ parser.add_argument('--delay', type=int, default=5, help='Delay in seconds betwe
 args = parser.parse_args()
 
 main_client = get_alb_client()
-tries = args.tries
-delay = args.delay
 
 if args.wait_for_healthy:
-    if wait_for_target_health(main_client, args.arn, args.target, 'healthy', tries, delay):
+    if wait_for_target_health(main_client, args.arn, args.target, 'healthy', args.tries, args.delay):
         print("Success!")
     else:
         print("Failed to reach healthy state.")
         exit(1)
 elif args.wait_for_unhealthy:
-    if wait_for_target_health(main_client, args.arn, args.target, 'unhealthy', tries, delay):
+    if wait_for_target_health(main_client, args.arn, args.target, 'unhealthy', args.tries, args.delay):
         print("Success!")
     else:
         print("Failed to reach unhealthy state.")
