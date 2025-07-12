@@ -44,10 +44,3 @@ docker run --rm \
 
 If run from within an EC2 instance running Amazon Linux, you can use the `ec2-metadata` command to retrieve the instance ID automatically:
 `ghcr.io/rpungello/aws-alb-status:latest "{target_group_arn}" "$(ec2-metadata --quiet --instance-id)"`
-
-## Usage
-As mentioned, this image is designed to be run as part of a zero-downtime deployment process.
-Included in this repository are sample scripts for using this image to wait until the status changes.
-See the `examples/` directory for these sample scripts. They check the status every 5 seconds for up to 5 minutes total, after which they will exit with a non-zero status code (indicating the deployment is not safe to proceed).
-Note that these example scripts assume an Amazon Linux host as they rely on `ec2-metadata` to retrieve the instance ID.
-If you are using a different host operating system, you will need to modify the script to obtain the instance ID in a different way.
